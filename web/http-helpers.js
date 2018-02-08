@@ -11,26 +11,30 @@ exports.headers = {
 };
 
 exports.serveAssets = function(res, asset, callback) {
-  if (fs.statSync(asset).isDirectory()) {
-    asset += 'index.html';
-  }
-    
+
   fs.exists(asset, (exist)=>{
-    
+
     if (!exist) {
-      res.writeHead(404, 'File Not Found', this.headers); //Error 404 - File Not Found
+      res.statusCode = 404; //Error 404 - File Not Found
+      res.statusCodeMessage = 'File Not Found'; 
+      callback();
     } 
+    
+    if (fs.statSync(asset).isDirectory()) {
+      asset += 'index.html';
+    }
 
     fs.readFile(asset, (error, data)=>{
       if (error) {
-        //Error 500 - Internal Server Error
+        res.statusCode = 500; //Error 500 - Internal Server Error
+        res.statusCodeMessage = 'Internal Server Error'; 
+        callback();
       } else {
-        callback(data);
+        callback(res, data);
       }
     });
     
   });
-  
   
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),

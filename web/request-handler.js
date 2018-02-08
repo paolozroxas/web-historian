@@ -11,12 +11,25 @@ var methods = {
     var pathName = `./web/public${parsedUrl.pathname}`;
     console.log('pathname = ' + pathName);
     httpHelpers.serveAssets(res, pathName, (data)=>{
-      res.writeHead(200, 'Okay!', httpHelpers.headers);
+      if (res.statusCode === 200) {
+        res.statusCodeMessage = 'OK';
+      }
+      res.writeHead(res.statusCode, res.statusCodeMessage, httpHelpers.headers);
       res.end(data);
     });
   },
   POST: (req, res)=>{
-    
+    console.log('POST Received');
+    var body = '';
+    req.on('data', function (chunk) {
+      body += chunk;
+    });
+    req.on('end', function () {
+      var post = JSON.parse(body);
+      console.log('Received POST = ' + post);
+      res.writeHead(200, 'OK', httpHelpers.headers);
+      res.end();
+    });
   },
   OPTIONS: (req, res)=>{
     
@@ -28,6 +41,9 @@ exports.handleRequest = function (req, res) {
   if (method) {
     method(req, res);
   } else {
-    //402 Error - Invalide Method
+    res.statusCode = 402; //402 Error - Invalid Method
+    res.statusCodeMessage = 'Invalid Method';
+    res.writeHead(res.statusCode, res.statusCodeMessage, httpHelpers.headers);
+    res.end();
   }
 };
