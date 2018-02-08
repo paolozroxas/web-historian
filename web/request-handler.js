@@ -27,6 +27,7 @@ var methods = {
     req.on('end', function () {
       var post = JSON.parse(body);
       console.log('Received POST = ' + post);
+      
       res.writeHead(200, 'OK', httpHelpers.headers);
       res.end();
     });

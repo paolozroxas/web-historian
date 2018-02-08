@@ -41,11 +41,28 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
-  
+  exports.readListOfUrls((data)=>{
+    //Iterating over array returning true if URL exists in array
+    //Passes boolean result to callback
+    if (!data) {
+      callback();
+    }
+    var result = _.some(data, (entry)=> { return url === entry; });
+    callback(result);
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
-  
+  //Takes in URL and writes to list with return
+  //Throws error on failure otherwise invokes callback with no args
+  console.log(url);
+  fs.writeFile(exports.paths.list, url + '\n', (error)=>{
+    if (error) {
+      throw error;
+    } else {
+      callback();
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
