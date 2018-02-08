@@ -56,9 +56,10 @@ exports.addUrlToList = function(url, callback) {
   //Takes in URL and writes to list with return
   //Throws error on failure otherwise invokes callback with no args
   console.log(url);
-  fs.writeFile(exports.paths.list, url + '\n', (error)=>{
+  fs.appendFile(exports.paths.list, url + '\n', (error)=>{
     if (error) {
       throw error;
+      return;
     } else {
       callback();
     }
@@ -66,7 +67,9 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
-  
+  //takes in url and if it is archived, passes true to callback, else passes false.
+  var dir = exports.paths.archivedSites + '/' + url;
+  callback(fs.existsSync(dir));
 };
 
 exports.downloadUrls = function(urls) {

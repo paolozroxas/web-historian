@@ -18,8 +18,8 @@ exports.serveAssets = function(res, asset, callback) {
       res.statusCode = 404; //Error 404 - File Not Found
       res.statusCodeMessage = 'File Not Found'; 
       callback();
+      return;
     } 
-    
     if (fs.statSync(asset).isDirectory()) {
       asset += 'index.html';
     }
@@ -29,6 +29,7 @@ exports.serveAssets = function(res, asset, callback) {
         res.statusCode = 500; //Error 500 - Internal Server Error
         res.statusCodeMessage = 'Internal Server Error'; 
         callback();
+        return;
       } else {
         callback(data);
       }

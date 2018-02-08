@@ -8,7 +8,7 @@ var methods = {
   GET: (req, res) => {
     console.log('GET Request Received!');
     var parsedUrl = url.parse(req.url);
-    var pathName = `./web/public${parsedUrl.pathname}`;
+    var pathName = archive.paths.siteAssets + parsedUrl.pathname;
     console.log('pathname = ' + pathName);
     httpHelpers.serveAssets(res, pathName, (data)=>{
       if (res.statusCode === 200) {
@@ -25,13 +25,47 @@ var methods = {
       body += chunk;
     });
     req.on('end', function () {
-      var post = JSON.parse(body);
+      var post = body.substring(4);
       console.log('Received POST = ' + post);
-      
-      res.writeHead(200, 'OK', httpHelpers.headers);
-      res.end();
+      archive.isUrlInList(post, (inList) => {
+        //case: not in list
+        if (!inList) {
+          archive.addUrlToList(post, () => {
+            httpHelpers.serveAssets(res, archive.paths.siteAssets + '/loading.html', (data) => {
+              if (res.statusCode === 200) {
+                res.statusCodeMessage = 'OK';
+              }
+              res.writeHead(res.statusCode, res.statusCodeMessage, httpHelpers.headers);
+              res.end(data);
+            });
+          });
+        } else {
+          archive.isUrlArchived(post, (isArchived) => {
+            //case: in list, not in archive
+            if (!isArchived) {
+              httpHelpers.serveAssets(res, archive.paths.siteAssets + '/loading.html', (data) => {
+                if (res.statusCode === 200) {
+                  res.statusCodeMessage = 'OK';
+                }
+                res.writeHead(res.statusCode, res.statusCodeMessage, httpHelpers.headers);
+                res.end(data);
+              });
+            } else {
+              //case: in list, in archive
+              httpHelpers.serveAssets(res, archive.paths.archivedSites + '/' + post, (data) => {
+                if (res.statusCode === 200) {
+                  res.statusCodeMessage = 'OK';
+                }
+                res.writeHead(res.statusCode, res.statusCodeMessage, httpHelpers.headers);
+                res.end(data);
+              });
+            }
+          });
+        }
+      });
     });
   },
+  
   OPTIONS: (req, res)=>{
     
   }

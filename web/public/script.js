@@ -18,7 +18,6 @@ var send = function(query) {
 
 $('.input-field').on('keyup', function(event) {
   if (event.which === 13) {
-    event.preventDefault();
     send(JSON.stringify($('.input-field').val()));
   }
 });
