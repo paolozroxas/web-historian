@@ -15,6 +15,7 @@ var methods = {
         res.statusCodeMessage = 'OK';
       }
       res.writeHead(res.statusCode, res.statusCodeMessage, httpHelpers.headers);
+      //archive.downloadUrls(['www.amazon.com', 'www.safeway.com', 'www.google.com', 'www.facebook.com']);
       res.end(data);
     });
   },
