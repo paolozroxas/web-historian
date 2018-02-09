@@ -14,7 +14,8 @@ var http = require('http');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
+  nodePath: '/Users/student/.nvm/versions/node/v6.11.3/bin/node'
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -36,7 +37,6 @@ exports.readListOfUrls = function(callback) {
     }
     var response = '';
     response += data;
-    console.log('FS-READ');
     var urls = response.split('\n');
     callback(urls);
   });

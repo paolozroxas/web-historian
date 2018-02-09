@@ -28,6 +28,11 @@ var methods = {
     req.on('end', function () {
       var post = body.substring(4);
       console.log('Received POST = ' + post);
+      if (!(post.substring(0, 3) === 'www')) {
+        res.writeHead(500, 'Internal Server Error', httpHelpers.headers);
+        res.end('');
+        return;
+      }
       archive.isUrlInList(post, (inList) => {
         //case: not in list
         if (!inList) {
